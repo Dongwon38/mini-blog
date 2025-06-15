@@ -4,12 +4,29 @@ import Head from 'next/head'
 import Link from 'next/link'
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
+import useUser from "@/hooks/useUser"
 
 export default function NewPost() {
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [loading, setLoading] = useState(false)
   const router = useRouter()
+  const user = useUser()
+
+  // user가 undefined인 경우 → 로딩 중
+  if (user === undefined) {
+    return <p>Loading...</p>  // 또는 spinner
+  }
+
+  // 로그인 안 된 경우 → alert 띄우고 리디렉션 또는 메시지
+  if (!user) {
+    return (
+      <div className="container">
+        <p style={{ color: 'red' }}>로그인 후 글을 작성할 수 있습니다.</p>
+        <Link href="/">← 홈으로</Link>
+      </div>
+    )
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -23,7 +40,12 @@ export default function NewPost() {
         title: title.trim(),
         content: content.trim(),
         excerpt,
-        createdAt: serverTimestamp()
+        createdAt: serverTimestamp(),
+        author: {
+          uid: user.uid,
+          name: user.displayName || "Anonymous",
+          photoURL: user.photoURL || null
+        }
       })
 
       router.push('/blog')

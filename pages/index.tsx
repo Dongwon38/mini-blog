@@ -1,3 +1,4 @@
+import AuthButton from '@/components/AuthButton'
 import Head from 'next/head'
 import Link from 'next/link'
 
@@ -5,16 +6,19 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>Your Name - Portfolio</title>
-        <meta name="description" content="Personal portfolio and blog" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
+        <title>Dongwon's Room</title>
+        <meta name="description" content="Developer and creator. Welcome to my minimal portfolio and blog." />
+        <meta property="og:title" content="Dongwon Kang – Portfolio" />
+        {/* 썸네일 이미지 */}
+        <meta property="og:image" content="https://2.img-dpreview.com/files/p/E~C1000x0S4000x4000T1200x1200~articles/3925134721/0266554465.jpeg" />
+        <meta property="og:description" content="Developer and creator. Welcome to my minimal portfolio and blog." />
       </Head>
 
       <div className="container">
         <nav className="nav">
           <Link href="/">Home</Link>
           <Link href="/blog">Blog</Link>
+          <AuthButton />
         </nav>
 
         <main>

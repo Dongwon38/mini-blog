@@ -4,12 +4,16 @@ import Head from 'next/head'
 import Link from 'next/link'
 import { doc, getDoc, updateDoc, deleteDoc } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
+import useUser from '@/hooks/useUser'
+import ReactMarkdown from 'react-markdown'
 
 interface Post {
   id: string
   title: string
   content: string
   createdAt: any
+  author: string
+  uid: string
 }
 
 export default function PostDetail() {
@@ -21,6 +25,10 @@ export default function PostDetail() {
   const [saving, setSaving] = useState(false)
   const router = useRouter()
   const { id } = router.query
+  const user = useUser()
+  const isAuthor = user && post?.author?.uid === user.uid
+
+
 
   useEffect(() => {
     if (!id) return
@@ -118,6 +126,9 @@ export default function PostDetail() {
     <>
       <Head>
         <title>{post.title} - Blog</title>
+        <meta name="description" content={post.content.slice(0, 100)} />
+        <meta property="og:title" content={post.title} />
+        <meta property="og:description" content={post.content.slice(0, 100)} />
       </Head>
 
       <div className="container">
@@ -168,20 +179,20 @@ export default function PostDetail() {
                     {formatDate(post.createdAt)}
                   </div>
                 </div>
-                <div style={{ display: 'flex', gap: '0.5rem' }}>
-                  <button onClick={() => setEditing(true)} className="btn btn-secondary">
-                    Edit
-                  </button>
-                  <button onClick={handleDelete} className="btn btn-secondary">
-                    Delete
-                  </button>
-                </div>
+                {isAuthor && (
+                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <button onClick={() => setEditing(true)} className="btn btn-secondary">
+                      Edit
+                    </button>
+                    <button onClick={handleDelete} className="btn btn-secondary">
+                      Delete
+                    </button>
+                  </div>
+                )}
               </div>
               
               <div className="post-content">
-                {post.content.split('\n').map((paragraph, index) => (
-                  <p key={index}>{paragraph}</p>
-                ))}
+                <ReactMarkdown>{post.content}</ReactMarkdown>
               </div>
             </>
           )}
