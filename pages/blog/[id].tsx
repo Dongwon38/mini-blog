@@ -12,8 +12,11 @@ interface Post {
   title: string
   content: string
   createdAt: any
-  author: string
-  uid: string
+  author: {
+    uid: string
+    name?: string
+    photoURL?: string | null
+  }
 }
 
 export default function PostDetail() {
